@@ -1,0 +1,5 @@
+{
+  "name": "Grimfields Battlefield Builder",
+  "description": "A professional-grade 2D tile-based map builder with customizable grid sizes, tile rotation, and AI-powered world-building lore generation.",
+  "requestFramePermissions": []
+}
