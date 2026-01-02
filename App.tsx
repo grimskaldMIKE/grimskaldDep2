@@ -3,15 +3,12 @@ import { TILE_SIZE, AVAILABLE_TILES } from './constants';
 import { MapData, MapDimensions, PlacedTile } from './types';
 import TilePalette from './components/TilePalette';
 import ControlPanel from './components/ControlPanel';
-import { generateMapLore } from './services/geminiService';
 
 const App: React.FC = () => {
   const [dimensions, setDimensions] = useState<MapDimensions>({ width: 10, height: 10 });
   const [mapData, setMapData] = useState<MapData>({});
   const [selectedTileId, setSelectedTileId] = useState<string | null>(AVAILABLE_TILES[0].id);
   const [showAnalysis, setShowAnalysis] = useState(false);
-  const [lore, setLore] = useState<string | null>(null);
-  const [isGeneratingLore, setIsGeneratingLore] = useState(false);
   const [zoom, setZoom] = useState(1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -86,29 +83,7 @@ const App: React.FC = () => {
     if (window.confirm("CRITICAL: CONFIRM DATA PURGE? DATA WILL BE LOST PERMANENTLY.")) {
       setMapData({});
       setShowAnalysis(false);
-      setLore(null);
     }
-  };
-
-  const wrapText = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) => {
-    const words = text.split(' ');
-    let line = '';
-    let currentY = y;
-
-    for (let n = 0; n < words.length; n++) {
-      const testLine = line + words[n] + ' ';
-      const metrics = ctx.measureText(testLine);
-      const testWidth = metrics.width;
-      if (testWidth > maxWidth && n > 0) {
-        ctx.fillText(line, x, currentY);
-        line = words[n] + ' ';
-        currentY += lineHeight;
-      } else {
-        line = testLine;
-      }
-    }
-    ctx.fillText(line, x, currentY);
-    return currentY + lineHeight;
   };
 
   const exportMap = async () => {
@@ -136,7 +111,6 @@ const App: React.FC = () => {
       img.crossOrigin = "anonymous";
       img.onload = () => res(img);
       img.onerror = () => {
-        // Create a stylized fallback if image fails to load
         const fallback = document.createElement('canvas');
         fallback.width = 256;
         fallback.height = 256;
@@ -170,7 +144,6 @@ const App: React.FC = () => {
         if (def) imgCache[id] = await loadImg(def.url);
       }
 
-      // Draw Grid Tiles
       for (let r = 0; r < dimensions.height; r++) {
         for (let c = 0; c < dimensions.width; c++) {
           const key = `${r},${c}`;
@@ -192,16 +165,13 @@ const App: React.FC = () => {
         }
       }
 
-      // Sidebar Background
       ctx.fillStyle = '#000000';
       ctx.fillRect(mapWidth, 0, legendWidth, canvas.height);
       
-      // Sidebar Border
       ctx.strokeStyle = '#ea580c';
       ctx.lineWidth = 4;
       ctx.strokeRect(mapWidth + 20, 20, legendWidth - 40, canvas.height - 40);
 
-      // Header Text
       ctx.fillStyle = '#ea580c';
       ctx.font = 'bold 40px monospace';
       ctx.fillText('GRIMFIELDS', mapWidth + 50, 90);
@@ -216,19 +186,6 @@ const App: React.FC = () => {
 
       let currentY = 190;
 
-      // Section: Lore Narrative
-      if (lore) {
-        ctx.fillStyle = '#ea580c';
-        ctx.font = 'bold 16px monospace';
-        ctx.fillText('>>> SITE_CHRONICLE', mapWidth + 50, currentY);
-        currentY += 30;
-        ctx.fillStyle = '#d4d4d8';
-        ctx.font = '13px monospace';
-        currentY = wrapText(ctx, lore, mapWidth + 50, currentY, legendWidth - 100, 20);
-        currentY += 40;
-      }
-
-      // Section: Terrain Analysis
       ctx.fillStyle = '#ea580c';
       ctx.font = 'bold 16px monospace';
       ctx.fillText('>>> REGIONAL_COMPOSITION', mapWidth + 50, currentY);
@@ -250,7 +207,6 @@ const App: React.FC = () => {
          currentY += 35;
       });
 
-      // Bottom Metadata
       const footerY = canvas.height - 100;
       ctx.fillStyle = '#ea580c';
       ctx.font = 'bold 16px monospace';
@@ -264,7 +220,6 @@ const App: React.FC = () => {
       ctx.fillStyle = '#ea580c';
       ctx.fillText('ENCRYPTED_LINK_ACTIVE // STATION_ORBIT_01', mapWidth + 50, footerY + 10);
 
-      // Download
       const link = document.createElement('a');
       link.download = `grimfields_dossier_${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -302,22 +257,12 @@ const App: React.FC = () => {
     e.target.value = "";
   };
 
-  const handleShowAnalysis = async () => {
+  const handleShowAnalysis = () => {
     if (Object.keys(mapData).length === 0) {
       alert("ERROR: INPUT BUFFER EMPTY. PLOT CO-ORDINATES BEFORE ANALYSIS.");
       return;
     }
-    setShowAnalysis(true);
-    setIsGeneratingLore(true);
-    try {
-      const generatedLore = await generateMapLore(mapData);
-      setLore(generatedLore || "Analysis failed to produce a coherent report.");
-    } catch (error) {
-      console.error(error);
-      setLore("ERROR: TRANSMISSION INTERRUPTED. DATA LINK ERROR.");
-    } finally {
-      setIsGeneratingLore(false);
-    }
+    setShowAnalysis(!showAnalysis);
   };
 
   const handleWheel = (e: React.WheelEvent) => {
@@ -356,7 +301,6 @@ const App: React.FC = () => {
         onExport={exportMap}
         onImport={handleImportTrigger}
         onGenerateLore={handleShowAnalysis}
-        isGeneratingLore={isGeneratingLore}
         zoom={zoom}
         setZoom={setZoom}
         onFit={handleFitToScreen}
@@ -427,27 +371,11 @@ const App: React.FC = () => {
             <div className="flex justify-between items-start mb-6 border-b border-orange-500/30 pb-4">
               <div>
                 <h3 className="text-xl font-black text-white font-mono tracking-widest uppercase">Analysis Report</h3>
-                <p className="text-[10px] text-orange-500 font-mono uppercase">Encrypted Transmission Received</p>
+                <p className="text-[10px] text-orange-500 font-mono uppercase">Structural integrity scan active</p>
               </div>
               <button onClick={() => setShowAnalysis(false)} className="text-zinc-600 hover:text-orange-500 transition-colors">
                 <i className="fas fa-xmark text-lg"></i>
               </button>
-            </div>
-
-            <div className="mb-8">
-              <h4 className="text-orange-500 font-black mb-3 flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider">
-                <span className="w-1 h-3 bg-orange-600"></span>
-                Planetary Survey Data
-              </h4>
-              {isGeneratingLore ? (
-                <div className="text-zinc-500 font-mono text-[11px] animate-pulse">
-                  DECRYPTING GEOLOGICAL ARCHIVES...
-                </div>
-              ) : (
-                <div className="text-zinc-300 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">
-                  {lore || "Survey pending. Initiate analysis."}
-                </div>
-              )}
             </div>
 
             <div className="space-y-1 font-mono text-[11px]">
@@ -467,7 +395,7 @@ const App: React.FC = () => {
 
             <div className="mt-8 pt-4 border-t border-zinc-900 flex justify-between text-[9px] text-zinc-600 font-mono">
                 <span>STATION: ORBITAL_01</span>
-                <span>SECURED CHANNEL</span>
+                <span>DATA INTEGRITY VERIFIED</span>
             </div>
           </div>
         )}

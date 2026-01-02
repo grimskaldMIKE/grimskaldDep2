@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MapDimensions } from '../types';
 
@@ -9,7 +8,6 @@ interface ControlPanelProps {
   onGenerateLore: () => void;
   onExport: () => void;
   onImport: () => void;
-  isGeneratingLore: boolean;
   zoom: number;
   setZoom: (z: number) => void;
   onFit: () => void;
@@ -22,7 +20,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   onGenerateLore,
   onExport,
   onImport,
-  isGeneratingLore,
   zoom,
   setZoom,
   onFit
@@ -60,7 +57,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           </div>
         </div>
 
-        {/* Zoom Controls */}
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded border border-zinc-800 ml-2">
           <button 
             onClick={() => setZoom(Math.max(0.1, zoom - 0.1))}
@@ -87,7 +83,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </div>
 
       <div className="flex items-center gap-4">
-        {/* Save/Load Group */}
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded border border-zinc-800">
            <button 
             onClick={onExport}
@@ -109,14 +104,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 
         <div className="w-px h-6 bg-zinc-800 mx-1" />
 
-        {/* Updated Button with isGeneratingLore state */}
         <button 
           onClick={onGenerateLore}
-          disabled={isGeneratingLore}
-          className={`flex items-center gap-2 px-6 py-2 rounded text-xs font-black uppercase tracking-widest transition-all bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_15px_rgba(234,88,12,0.3)] border border-orange-400 ${isGeneratingLore ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className="flex items-center gap-2 px-6 py-2 rounded text-xs font-black uppercase tracking-widest transition-all bg-orange-600 hover:bg-orange-500 text-white shadow-[0_0_15px_rgba(234,88,12,0.3)] border border-orange-400"
         >
-          <i className={`fas ${isGeneratingLore ? 'fa-spinner fa-spin' : 'fa-chart-simple'}`}></i>
-          {isGeneratingLore ? 'ANALYZING...' : 'Analyze Terrain'}
+          <i className="fas fa-chart-simple"></i>
+          Analyze Terrain
         </button>
 
         <div className="w-px h-6 bg-zinc-800 mx-1" />
