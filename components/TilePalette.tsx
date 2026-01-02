@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AVAILABLE_TILES } from '../constants';
 
@@ -9,7 +8,7 @@ interface TilePaletteProps {
 
 const TilePalette: React.FC<TilePaletteProps> = ({ 
   selectedTileId, 
-  onSelectTile, 
+  onSelectTile,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
 
@@ -68,9 +67,11 @@ const TilePalette: React.FC<TilePaletteProps> = ({
                   alt={tile.name} 
                   className={`w-full h-full object-cover transition-all duration-700 ${selectedTileId === tile.id ? 'grayscale-0' : 'grayscale group-hover:grayscale-0'}`}
                   loading="lazy"
+                  onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/256/000/ea580c?text=SIGNAL_LOSS'; }}
                 />
-                <div className="absolute inset-x-0 bottom-0 bg-black/80 p-1 transform translate-y-full group-hover:translate-y-0 transition-transform">
-                  <div className="text-[7px] font-black text-white truncate text-center">{tile.name}</div>
+                
+                <div className="absolute inset-x-0 bottom-0 bg-black/80 p-1 transform translate-y-full group-hover:translate-y-0 transition-transform flex items-center justify-center px-2">
+                  <div className="text-[7px] font-black text-white truncate text-center flex-1 uppercase tracking-tighter">{tile.name}</div>
                 </div>
               </button>
             </div>
