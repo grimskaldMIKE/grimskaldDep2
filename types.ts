@@ -1,8 +1,10 @@
+
 export interface TileType {
   id: string;
   name: string;
   url: string;
   category: 'Hills' | 'Rivers' | 'Trenches' | 'Plains' | 'Other Features';
+  isExternal?: boolean;
 }
 
 export interface PlacedTile {

@@ -7,7 +7,6 @@ interface ControlPanelProps {
   onClear: () => void;
   onGenerateLore: () => void;
   onExport: () => void;
-  onImport: () => void;
   zoom: number;
   setZoom: (z: number) => void;
   onFit: () => void;
@@ -19,7 +18,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   onClear, 
   onGenerateLore,
   onExport,
-  onImport,
   zoom,
   setZoom,
   onFit
@@ -91,14 +89,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           >
             <i className="fas fa-download mr-2"></i>
             Export
-          </button>
-          <button 
-            onClick={onImport}
-            className="px-4 py-1.5 hover:text-white rounded text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:bg-zinc-800 transition-all"
-            title="Upload Map Manifest (.json)"
-          >
-            <i className="fas fa-upload mr-2"></i>
-            Import
           </button>
         </div>
 

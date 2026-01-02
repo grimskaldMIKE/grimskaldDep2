@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  // Ensure that the root-level PNG files are treated as static assets during the build
-  publicDir: false, 
+  // Setting publicDir to '.' ensures that your .png files in the root
+  // are copied to the build output so they don't 404 on Vercel.
+  publicDir: '.', 
   build: {
     rollupOptions: {
-      // This ensures all your root-level files are considered
       input: {
         main: './index.html',
       },
