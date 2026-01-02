@@ -4,7 +4,7 @@ export const TILE_SIZE = 256;
 
 export const AVAILABLE_TILES: TileType[] = [
   // Plains
-  { id: 'plain-flat', name: 'flatTile', url: 'https://drive.google.com/file/d/1SEmNLeBZbB8w9k-0vWoKJhtV4xDVotrW/view?usp=sharing', category: 'Plains' },
+  { id: 'plain-flat', name: 'flatTile', url: 'http://localhost:3000/flatTile.png', category: 'Plains' },
   { id: 'plain-open1', name: 'openTile1', url: 'openTile1.png', category: 'Plains' },
   { id: 'plain-open2', name: 'openTile2', url: 'openTile2.png', category: 'Plains' },
 
